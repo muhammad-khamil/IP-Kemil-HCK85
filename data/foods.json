@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Nasi Goreng",
+    "description": "Nasi goreng khas Indonesia.",
+    "imageUrl": "https://example.com/images/nasgor.jpg",
+    "category": "Main Course",
+    "restaurantId": 1
+  },
+  {
+    "name": "Bakso Sapi",
+    "description": "Bakso sapi dengan kuah gurih.",
+    "imageUrl": "https://example.com/images/bakso-sapi.jpg",
+    "category": "Soup",
+    "restaurantId": 2
+  }
+]

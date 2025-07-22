@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Warung Makan Sederhana",
+    "address": "Jl. Merdeka No. 123, Jakarta",
+    "imageUrl": "https://example.com/images/warung.jpg",
+    "category": "Indonesian",
+    "rating": 4.5
+  },
+  {
+    "name": "Bakso Pak Kumis",
+    "address": "Jl. Sudirman No. 45, Bandung",
+    "imageUrl": "https://example.com/images/bakso.jpg",
+    "category": "Bakso",
+    "rating": 4.2
+  }
+]
