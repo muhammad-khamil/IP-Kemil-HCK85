@@ -53,8 +53,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: false,
       validate: {
-        min: { args: 0, msg: 'Rating must be at least 0' },
-        max: { args: 5, msg: 'Rating must be at most 5' },
+        min: { args: [0], msg: 'Rating must be at least 0' },
+        max: { args: [5], msg: 'Rating must be at most 5' },
         notNull: { msg: 'Rating is required' }
       }
     }

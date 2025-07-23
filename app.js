@@ -1,0 +1,48 @@
+require('dotenv').config()
+const express = require('express');
+const UserController = require('./controllers/userController');
+const authentication = require('./middleware/authentication');
+const adminOnly = require('./middleware/adminOnly');
+const errorHandler = require('./middleware/errorHandler');
+const PublicController = require('./controllers/RestaurantController');
+const CMSController = require('./controllers/CMSController');
+const app = express()
+const port = 3000
+
+
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+
+app.post('/register', UserController.register)
+app.post('/login', UserController.login)
+ 
+// Public routes
+app.get('/public/restaurants', PublicController.getAllRestaurants);
+app.get('/public/restaurants/:id', PublicController.getDetailRestaurant);
+app.get('/public/menu/nutrition', PublicController.getMenuNutrition);
+app.post('/public/restaurants/:id/reviews', authentication, PublicController.addReview);
+
+app.get('/public/favorites', authentication, PublicController.getFavorites);
+app.post('/public/favorites', authentication, PublicController.addFavorite);
+app.delete('/public/favorites/:id', authentication, PublicController.removeFavorite);
+
+
+//cms restaurant routes
+app.get('/cms/restaurants', authentication, adminOnly, CMSController.listRestaurants);
+app.post('/cms/restaurants', authentication, adminOnly, CMSController.createRestaurant);
+app.get('/cms/restaurants/:id', authentication, adminOnly, CMSController.getDetailRestaurant);
+app.put('/cms/restaurants/:id', authentication, adminOnly, CMSController.updateRestaurant);
+app.delete('/cms/restaurants/:id', authentication, adminOnly, CMSController.deleteRestaurant);
+
+//cms food routes
+app.get('/cms/foods', authentication, adminOnly, CMSController.listFoods);
+app.post('/cms/foods', authentication, adminOnly, CMSController.createFood);
+app.get('/cms/foods/:id', authentication, adminOnly, CMSController.getDetailFood);
+app.put('/cms/foods/:id', authentication, adminOnly, CMSController.updateFood);
+app.delete('/cms/foods/:id', authentication, adminOnly, CMSController.deleteFood);
+
+app.use(errorHandler)
+
+module.exports = app
