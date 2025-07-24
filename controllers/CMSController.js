@@ -84,8 +84,8 @@ class CMSController{
 
     static async createFood(req, res, next) {
         try {
-            const {name, description, imageUrl, restaurantId} = req.body;
-            const food = await Food.create({name, description, imageUrl, restaurantId});
+            const {name, description, imageUrl, category, restaurantId} = req.body;
+            const food = await Food.create({name, description, imageUrl, category, restaurantId});
             res.status(201).json(food);
         } catch (error) {
             next(error);

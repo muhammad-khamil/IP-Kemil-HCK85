@@ -1,4 +1,6 @@
 require('dotenv').config()
+
+const cors = require('cors');
 const express = require('express');
 const UserController = require('./controllers/userController');
 const authentication = require('./middleware/authentication');
@@ -10,13 +12,13 @@ const app = express()
 const port = 3000
 
 
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
+app.use(cors());
 
 app.post('/register', UserController.register)
 app.post('/login', UserController.login)
+app.post('/google-login', UserController.googleLogin);
  
 // Public routes
 app.get('/public/restaurants', PublicController.getAllRestaurants);

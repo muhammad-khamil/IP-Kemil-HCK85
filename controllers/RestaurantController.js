@@ -95,7 +95,7 @@ class PublicController {
     static async addFavorite(req, res, next) {
         try {
             const userId = req.user.id;
-            const foodId = req.params.id;
+            const foodId = req.body.FoodId || req.body.foodId; // ambil dari body
 
             const favorite = await Favorite.create({ userId, foodId });
             res.status(201).json(favorite);
@@ -104,22 +104,23 @@ class PublicController {
         }
     }
 
+
     static async removeFavorite(req, res, next) {
-        try {
-            const userId = req.user.id;
-            const foodId = req.params.id;
+    try {
+        const userId = req.user.id;
+        const foodId = req.params.id;
 
-            const favorite = await Favorite.findOne({ where: { userId, foodId } });
-            if (!favorite) {
-                throw { name: 'NotFound', message: 'Favorite not found' };
-            }
-
-            await favorite.destroy();
-            res.status(200).json({ message: 'Favorite removed successfully' });
-        } catch (error) {
-            next(error);
+        const favorite = await Favorite.findOne({ where: { userId, foodId } });
+        if (!favorite) {
+            throw { name: 'NotFound', message: 'Favorite not found' };
         }
+
+        await favorite.destroy();
+        res.status(200).json({ message: 'Favorite removed successfully' });
+    } catch (error) {
+        next(error);
     }
+}
 
 
 }
