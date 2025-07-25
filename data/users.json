@@ -1,12 +1,12 @@
 [
   {
-    "fullname": "Budi Santoso",
-    "email": "budi@example.com",
-    "password": "password123"
+    "fullname": "user1",
+    "email": "user1@example.com",
+    "password": "123456"
   },
   {
-    "fullname": "Siti Aminah",
-    "email": "siti@example.com",
-    "password": "password456"
+    "fullname": "user2",
+    "email": "user2@example.com",
+    "password": "123456"
   }
 ]

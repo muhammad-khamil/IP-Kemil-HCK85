@@ -39,16 +39,12 @@ class PublicController {
         try {
             const { name } = req.query;
             const food = await axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.SPOONACULAR_API_KEY}&query=${name}`);
-            // console.log(food.data);
 
-            // Check if results exist and has at least one item
             if (!food.data.results || food.data.results.length === 0) {
                 throw { name: 'NotFound', message: 'Food not found' };
             }
 
             const data = food.data.results[0].id
-            // console.log(data, "<<< data");
-
 
             if (!data) {
                 throw { name: 'NotFound', message: 'Food not found' };
