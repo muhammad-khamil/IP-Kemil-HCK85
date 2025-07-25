@@ -30,11 +30,11 @@ class UserController {
             const { email, password } = req.body;
 
             if (!email) {
-                throw { name: 'ValidationError', message: 'Email is required' };
+                throw { name: 'BadRequest', message: 'Email is required' };
             }
 
             if (!password) {
-                throw { name: 'ValidationError', message: 'Password is required' };
+                throw { name: 'BadRequest', message: 'Password is required' };
             }
 
             const user = await User.findOne({ where: { email } });
@@ -57,8 +57,6 @@ class UserController {
 
             res.status(200).json({ access_token, role: user.role });
         } catch (error) {
-            console.log(error, "<<<");
-
             next(error);
         }
     }
@@ -96,11 +94,17 @@ class UserController {
                 }
             })
 
-            console.log(user, created, "<<< user created?");
-            // bikin access token
-            const access_token = signToken({ id: user.id })
+            const access_token = signToken({
+                id: user.id,
+                email: user.email,
+                role: user.role
+            });
 
-            res.status(created ? 201 : 200).json({ access_token })
+            res.status(created ? 201 : 200).json({
+                access_token,
+                role: user.role,
+                fullname: user.fullname
+            });
         } catch (error) {
             next(error)
         }

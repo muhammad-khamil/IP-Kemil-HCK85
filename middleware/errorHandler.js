@@ -2,6 +2,15 @@ const errorHandler = (error, req, res, next) => {
 
   // console.log(error, "<<< Error Handler");
   
+  // Multer errors
+  if (error.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ message: "File size too large. Maximum size is 5MB" });
+  }
+  
+  if (error.message === 'Only image files are allowed') {
+    return res.status(400).json({ message: "Only image files are allowed" });
+  }
+  
   switch (error.name) {
     case 'SequelizeValidationError':
     case 'SequelizeUniqueConstraintError':

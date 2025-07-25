@@ -33,11 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     imageUrl: {
       type: DataTypes.TEXT,
-      allowNull: false,
-      validate: {
-        notEmpty: { msg: 'ImageUrl is required' },
-        notNull: { msg: 'ImageUrl is required' }
-      }
+      allowNull: true
     },
     category: {
       type: DataTypes.STRING,

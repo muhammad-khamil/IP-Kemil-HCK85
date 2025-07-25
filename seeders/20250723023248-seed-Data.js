@@ -1,12 +1,11 @@
 'use strict';
 
-const { hashpassword } = require('../helpers/bcrypt');
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
+    const { User, Restaurant, Food, RestaurantReview, Favorite } = require('../models');
+
     const user = require('../data/users.json').map((el) => {
-      el.password = hashpassword(el.password)
       el.createdAt = new Date();
       el.updatedAt = new Date();
       return el;
@@ -40,7 +39,7 @@ module.exports = {
       return el;
     })
 
-    await queryInterface.bulkInsert('Users', user);
+    await User.bulkCreate(user, { individualHooks: true });
     await queryInterface.bulkInsert('Restaurants', restaurant);
     await queryInterface.bulkInsert('Foods', food);
     await queryInterface.bulkInsert('RestaurantReviews', restaurantReview);

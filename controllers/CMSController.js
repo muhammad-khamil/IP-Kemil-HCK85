@@ -1,4 +1,5 @@
 const {Restaurant, Food, RestaurantReview, Favorite, User} = require('../models');
+const cloudinary = require('../config/cloudinary');
 
 class CMSController{
     static async listRestaurants(req, res, next) {
@@ -12,7 +13,11 @@ class CMSController{
 
     static async createRestaurant(req, res, next) {
         try {
-            const {name, address, imageUrl, category, rating} = req.body;
+            const {name, address, category, rating} = req.body;
+            
+            // Get image URL from uploaded file
+            const imageUrl = req.file ? req.file.path : req.body.imageUrl;
+
             const restaurant = await Restaurant.create({
                 name,
                 address,
@@ -22,6 +27,10 @@ class CMSController{
             });
             res.status(201).json(restaurant);
         } catch (error) {
+            // If there was an error and file was uploaded, delete it from Cloudinary
+            if (req.file && req.file.public_id) {
+                await cloudinary.uploader.destroy(req.file.public_id);
+            }
             next(error);
         }
     }
@@ -42,11 +51,24 @@ class CMSController{
     static async updateRestaurant(req, res, next) {
         try {
             const {id} = req.params;
-            const {name, address, imageUrl, category} = req.body
+            const {name, address, category} = req.body;
             const data = await Restaurant.findByPk(id);
 
+            if (!data) {
+                throw {name: 'NotFound', message: `Restaurant with id ${id} not found`};
+            }
+
+            const updateData = {name, address, category};
+            
+            // If new image is uploaded, add it to update data
+            if (req.file) {
+                updateData.imageUrl = req.file.path;
+            } else if (req.body.imageUrl) {
+                updateData.imageUrl = req.body.imageUrl;
+            }
+
             const result = await Restaurant.update(
-                {name, address, imageUrl, category},
+                updateData,
                 {where: {id}, returning: true}
             )
             if (result[0] === 0) {
@@ -54,6 +76,10 @@ class CMSController{
             }
             res.status(200).json({message: `Restaurant ${data.name} updated successfully`});
         } catch (error) {
+            // If there was an error and file was uploaded, delete it from Cloudinary
+            if (req.file && req.file.public_id) {
+                await cloudinary.uploader.destroy(req.file.public_id);
+            }
             next(error);
         }
     }
@@ -84,10 +110,18 @@ class CMSController{
 
     static async createFood(req, res, next) {
         try {
-            const {name, description, imageUrl, category, restaurantId} = req.body;
+            const {name, description, category, restaurantId} = req.body;
+            
+            // Get image URL from uploaded file
+            const imageUrl = req.file ? req.file.path : req.body.imageUrl;
+
             const food = await Food.create({name, description, imageUrl, category, restaurantId});
             res.status(201).json(food);
         } catch (error) {
+            // If there was an error and file was uploaded, delete it from Cloudinary
+            if (req.file && req.file.public_id) {
+                await cloudinary.uploader.destroy(req.file.public_id);
+            }
             next(error);
         }
     }
@@ -110,11 +144,24 @@ class CMSController{
     static async updateFood(req, res, next) {
         try {
             const {id} = req.params;
-            const {name, description, imageUrl, restaurantId} = req.body;
+            const {name, description, restaurantId} = req.body;
             const data = await Food.findByPk(id);
 
+            if (!data) {
+                throw {name: 'NotFound', message: 'Food not found'};
+            }
+
+            const updateData = {name, description, restaurantId};
+            
+            // If new image is uploaded, add it to update data
+            if (req.file) {
+                updateData.imageUrl = req.file.path;
+            } else if (req.body.imageUrl) {
+                updateData.imageUrl = req.body.imageUrl;
+            }
+
             const result = await Food.update(
-                {name, description, imageUrl, restaurantId},
+                updateData,
                 {where: {id}}
             );
             if (result[0] === 0) {
@@ -122,6 +169,10 @@ class CMSController{
             }
             res.status(200).json({message: `Food updated ${data.name} successfully`});
         } catch (error) {
+            // If there was an error and file was uploaded, delete it from Cloudinary
+            if (req.file && req.file.public_id) {
+                await cloudinary.uploader.destroy(req.file.public_id);
+            }
             next(error);
         }
     }

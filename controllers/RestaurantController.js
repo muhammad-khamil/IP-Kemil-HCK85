@@ -38,8 +38,13 @@ class PublicController {
     static async getMenuNutrition(req, res, next) {
         try {
             const { name } = req.query;
-            const food = await axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=e69eda8b169f4f1d8a53415df5148573&query=${name}`);
+            const food = await axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.SPOONACULAR_API_KEY}&query=${name}`);
             // console.log(food.data);
+
+            // Check if results exist and has at least one item
+            if (!food.data.results || food.data.results.length === 0) {
+                throw { name: 'NotFound', message: 'Food not found' };
+            }
 
             const data = food.data.results[0].id
             // console.log(data, "<<< data");
@@ -49,7 +54,7 @@ class PublicController {
                 throw { name: 'NotFound', message: 'Food not found' };
             }
 
-            const nutrition = await axios.get(`https://api.spoonacular.com/recipes/${data}/nutritionWidget.json?apiKey=e69eda8b169f4f1d8a53415df5148573`)
+            const nutrition = await axios.get(`https://api.spoonacular.com/recipes/${data}/nutritionWidget.json?apiKey=${process.env.SPOONACULAR_API_KEY}`)
             // console.log(nutrition.data, "<<< nutrition");
             const nutritionData = {
                 calories: nutrition.data.calories,
@@ -71,6 +76,18 @@ class PublicController {
             const userId = req.user.id;
             const restaurantId = req.params.id;
             const { rating, comment } = req.body;
+
+            if (!rating) {
+                throw { name: 'BadRequest', message: 'Rating is required' };
+            }
+
+            if (rating < 1 || rating > 5) {
+                throw { name: 'BadRequest', message: 'Rating must be between 1 and 5' };
+            }
+
+            if (!comment) {
+                throw { name: 'BadRequest', message: 'Comment is required' };
+            }
 
             const review = await RestaurantReview.create({ userId, restaurantId, rating, comment });
             res.status(201).json(review);
